@@ -23,3 +23,10 @@ type Attributes struct {
 	PayloadFormat      string `json:"payloadFormat"`
 	ObjectID           string `json:"objectId"`
 }
+
+// GetFileName はGCSで更新があったファイル名を返す
+func (p *PostPubSubParams) GetFileName() string {
+	fileName := p.Message.Attributes.ObjectID
+
+	return fileName
+}
