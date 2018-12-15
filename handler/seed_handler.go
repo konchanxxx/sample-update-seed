@@ -16,6 +16,7 @@ func LoadSeeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("request params: %#v", params)
+	log.Printf("seed file name: %s", params.Message.Attributes.ObjectID)
 
 	w.WriteHeader(http.StatusOK)
 }
