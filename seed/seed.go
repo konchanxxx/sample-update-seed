@@ -1,12 +1,16 @@
 package seed
 
 import (
-	"cloud.google.com/go/storage"
 	"context"
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
+	"os"
+	"strings"
+
+	"cloud.google.com/go/firestore"
+	"cloud.google.com/go/storage"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -26,9 +30,12 @@ func Load(ctx context.Context, bucketID string, fileName string) error {
 		return errors.Wrap(err, ErrLoad.Error())
 	}
 
-	log.Printf("Output seed data: %#v", seeds)
-
-	// TODO: firestoreにseedを反映する処理追加
+	collectionName := strings.Replace(fileName, ".yaml", "", 1)
+	err = putMulti(ctx, collectionName, seeds)
+	if err != nil {
+		return errors.Wrap(err, ErrLoad.Error())
+	}
+	log.Printf("Updated seed data: %#v", seeds)
 
 	return nil
 }
@@ -61,4 +68,21 @@ func mapSeed(buf []byte) ([]map[string]string, error) {
 	}
 
 	return src, nil
+}
+
+func putMulti(ctx context.Context, collectionName string, seeds []map[string]string) error {
+	projectID := os.Getenv("GCP_PROJECT_ID")
+	c, err := firestore.NewClient(ctx, projectID)
+	if err != nil {
+		return err
+	}
+
+	for _, seed := range seeds {
+		_, err := c.Collection(collectionName).Doc(seed["id"]).Set(ctx, seed)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
