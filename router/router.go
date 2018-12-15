@@ -7,6 +7,7 @@ import (
 	"github.com/rexitorg/sample-update-seed/handler"
 )
 
+// NewRouter はルーターを生成する
 func NewRouter() *chi.Mux {
 	r := chi.NewRouter()
 
