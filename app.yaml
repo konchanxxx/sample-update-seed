@@ -1,0 +1,13 @@
+runtime: go111
+
+service: sample-update-seed
+
+handlers:
+  - url: /_ah/push-handlers/.*
+    script: main.APPLICATION
+    login: admin
+  - url: /.*
+    script: auto
+
+includes:
+  - secret.yaml
