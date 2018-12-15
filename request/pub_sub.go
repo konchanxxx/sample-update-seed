@@ -24,6 +24,13 @@ type Attributes struct {
 	ObjectID           string `json:"objectId"`
 }
 
+// GetBucketID はGCSのバケット名を返す
+func (p *PostPubSubParams) GetBucketID() string {
+	bucketID := p.Message.Attributes.BucketID
+
+	return bucketID
+}
+
 // GetFileName はGCSで更新があったファイル名を返す
 func (p *PostPubSubParams) GetFileName() string {
 	fileName := p.Message.Attributes.ObjectID

@@ -1,15 +1,12 @@
 package seed
 
 import (
-	"context"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
-
 	"cloud.google.com/go/storage"
+	"context"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"log"
 )
 
 var (
@@ -18,8 +15,8 @@ var (
 )
 
 // Load はseedをfirestoreにロードする
-func Load(ctx context.Context, fileName string) error {
-	buf, err := readSeed(ctx, fileName)
+func Load(ctx context.Context, bucketID string, fileName string) error {
+	buf, err := readSeed(ctx, bucketID, fileName)
 	if err != nil {
 		return errors.Wrap(err, ErrLoad.Error())
 	}
@@ -36,16 +33,13 @@ func Load(ctx context.Context, fileName string) error {
 	return nil
 }
 
-func readSeed(ctx context.Context, fileName string) ([]byte, error) {
+func readSeed(ctx context.Context, bucketID string, fileName string) ([]byte, error) {
 	c, err := storage.NewClient(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	bucketName := os.Getenv("GCS_BUCKET_NAME")
-	r, err := c.Bucket(bucketName).Object(fileName).NewReader(ctx)
-	fmt.Println(bucketName)
-	fmt.Println(fileName)
+	r, err := c.Bucket(bucketID).Object(fileName).NewReader(ctx)
 	if err != nil {
 		return nil, err
 	}

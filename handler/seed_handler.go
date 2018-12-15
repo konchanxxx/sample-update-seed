@@ -17,8 +17,9 @@ func LoadSeeds(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Failed LoadSeeds: %#v", err)
 	}
 
+	bucketID := params.GetBucketID()
 	fileName := params.GetFileName()
-	err = seed.Load(r.Context(), fileName)
+	err = seed.Load(r.Context(), bucketID, fileName)
 	if err != nil {
 		log.Fatalf("Failed LoadSeeds: %#v", err)
 	}
