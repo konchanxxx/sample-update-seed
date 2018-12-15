@@ -6,8 +6,10 @@ import (
 	"net/http"
 
 	"github.com/rexitorg/sample-update-seed/request"
+	"github.com/rexitorg/sample-update-seed/seed"
 )
 
+// LoadSeeds はseedをロードする
 func LoadSeeds(w http.ResponseWriter, r *http.Request) {
 	params := &request.PostPubSubParams{}
 	err := parseRequest(r, params)
@@ -15,8 +17,11 @@ func LoadSeeds(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Failed LoadSeeds: %#v", err)
 	}
 
-	log.Printf("request params: %#v", params)
-	log.Printf("seed file name: %s", params.Message.Attributes.ObjectID)
+	fileName := params.GetFileName()
+	err = seed.Load(r.Context(), fileName)
+	if err != nil {
+		log.Fatalf("Failed LoadSeeds: %#v", err)
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
